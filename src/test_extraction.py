@@ -85,6 +85,32 @@ class TestExtractionNode(unittest.TestCase):
     def test_link_extraction_has_exclamation(self):
         matches = extract_markdown_links("This is text with a ![link](https://www.example.com) and ![another](https://www.example.com/another)")
         self.assertEqual(matches, [])
+
+
+
+    def test_text_to_textnodes(self):
+        new_nodes = text_to_textnodes("This is **text** with an *italic* word and a `code block` and an ![image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png) and a [link](https://boot.dev)")
+        self.assertEqual(new_nodes, [
+            TextNode("This is ", TextType.TEXT),
+            TextNode("text", TextType.BOLD),
+            TextNode(" with an ", TextType.TEXT),
+            TextNode("italic", TextType.ITALIC),
+            TextNode(" word and a ", TextType.TEXT),
+            TextNode("code block", TextType.CODE),
+            TextNode(" and an ", TextType.TEXT),
+            TextNode("image", TextType.IMAGE, "https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png"),
+            TextNode(" and a ", TextType.TEXT),
+            TextNode("link", TextType.LINK, "https://boot.dev"),
+        ])
+
+    def test_text_to_textnodes_2(self):
+        new_nodes = text_to_textnodes("This is **text** **text**")
+        self.assertEqual(new_nodes, [
+            TextNode("This is ", TextType.TEXT),
+            TextNode("text", TextType.BOLD),
+            TextNode(" ", TextType.TEXT),
+            TextNode("text", TextType.BOLD)
+        ])
         
 
 if __name__ == "__main__":
