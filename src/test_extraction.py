@@ -88,7 +88,7 @@ class TestExtractionNode(unittest.TestCase):
 
 
 
-    def test_text_to_textnodes(self):
+    def test_text_to_textnodes_1(self):
         new_nodes = text_to_textnodes("This is **text** with an *italic* word and a `code block` and an ![image](https://storage.googleapis.com/qvault-webapp-dynamic-assets/course_assets/zjjcJKZ.png) and a [link](https://boot.dev)")
         self.assertEqual(new_nodes, [
             TextNode("This is ", TextType.TEXT),
@@ -110,6 +110,31 @@ class TestExtractionNode(unittest.TestCase):
             TextNode("text", TextType.BOLD),
             TextNode(" ", TextType.TEXT),
             TextNode("text", TextType.BOLD)
+        ])
+
+    
+    def test_markdown_to_blocks_1(self):
+        markdown = "This is **bolded** paragraph\n\nThis is another paragraph with *italic* text and `code` here\nThis is the same paragraph on a new line"
+        blocks = markdown_to_blocks(markdown)
+        self.assertEqual(blocks, [
+            "This is **bolded** paragraph", 
+            "This is another paragraph with *italic* text and `code` here\nThis is the same paragraph on a new line"
+        ])
+
+    def test_markdown_to_blocks_2(self):
+        markdown = """This is **bolded** paragraph
+
+This is another paragraph with *italic* text and `code` here
+This is the same paragraph on a new line
+
+* This is a list
+* with items"""
+        blocks = markdown_to_blocks(markdown)
+        self.assertEqual(blocks, [
+            "This is **bolded** paragraph", 
+            "This is another paragraph with *italic* text and `code` here\nThis is the same paragraph on a new line",
+            """* This is a list\n* with items"""
+
         ])
         
 
