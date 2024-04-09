@@ -20,7 +20,7 @@ class HTMLNode:
 
         return " " + " ".join(attributes)
     
-    def __repr(self):
+    def __repr__(self):
         return f"HTMLNode({self.tag}, {self.value}, {self.children}, {self.props})"
 
 
