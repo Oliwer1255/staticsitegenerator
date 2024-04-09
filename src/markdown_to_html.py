@@ -64,7 +64,7 @@ def heading_to_html(block):
     return ParentNode(tag, children)
 
 def code_to_html(block):
-    block = block.strip("```")
+    block = block.strip("```\n")
 
     return ParentNode("pre", [ParentNode("code", [LeafNode(None, block)])]) 
 
@@ -99,7 +99,7 @@ def ordered_list_to_html(block):
     children = []
 
     for i in range(0, len(lines)):
-        lines[i] = lines[i].lstrip(f"{i}. ")
+        lines[i] = lines[i].lstrip(f"{i + 1}. ")
         children.append(LeafNode("li", lines[i]))
 
     return ParentNode("ol", children)

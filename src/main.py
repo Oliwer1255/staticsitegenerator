@@ -1,10 +1,32 @@
 from markdown_to_html import *
-from os import *
+from os import path, listdir, mkdir
 from shutil import *
 
 def main():
-    rmtree("../public")
-    copy_all_contents_to_new_directory("../static", "../public")
+    rmtree("./public")
+    copy_all_contents_to_new_directory("./static", "./public")
+    copy_all_contents_to_new_directory("./content", "./public")
+
+def generate_page(from_path, template_path, dest_path):
+    print(f"Creating page from {from_path} to {dest_path}, using {template_path}")
+    
+    markdown_file = open(from_path, "r")
+    markdown = markdown_file.read()
+    markdown_file.close()
+
+    template_file = open(template_path, "r")
+    template = template_file.read()
+    template_file.close()
+
+    html = markdown_to_html_node(markdown).to_html()
+    title = extract_title(markdown)
+
+    page = template.replace("{{ Content }}", html)
+    page = page.replace("{{ Title }}", title)
+
+    file_name = from_path.split("/")[-1].split(".")[0]
+    with open(path.join(dest_path, f"{file_name}.html"), "w") as file:
+        file.write(page)
 
     
 def copy_all_contents_to_new_directory(source_path, dest_path):
@@ -23,11 +45,22 @@ def copy_all_contents_to_new_directory(source_path, dest_path):
     for item in contents:
         item_path = path.join(source_path, item)
         if path.isfile(item_path):
-            print(f"Copy file: {item_path}")
-            copy(item_path, dest_path)
+            if item.endswith(".md"):
+                generate_page(item_path, "./template.html", dest_path)
+            else:    
+                print(f"Copy file: {item_path}")
+                copy(item_path, dest_path)
         else:
             new_dest_path = path.join(dest_path, item)
             copy_all_contents_to_new_directory(item_path, new_dest_path)
 
+def extract_title(markdown):
+    lines = markdown.split("\n")
+
+    for line in lines:
+        if line.startswith("# "):
+            return line.lstrip("# ")
+
+    raise Exception("Did not find h1 header")
 
 main()
